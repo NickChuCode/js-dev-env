@@ -15,7 +15,7 @@ describe('index.html', () => {
     //设置jsdom环境
     jsdom.env(index, (err, window) => {
       const h1 = window.document.getElementsByTagName('h1')[0];
-      expect(h1.innerHTML).to.equal("Hello World!haha");
+      expect(h1.innerHTML).to.equal("Users");
       done();
       window.close();//释放内存
     });
