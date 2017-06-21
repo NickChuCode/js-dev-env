@@ -2,6 +2,7 @@ import path from 'path';
 import webpack from 'webpack';
 import htmlWebpackPlugin from 'html-webpack-plugin';
 import webpackMd5Hash from 'webpack-md5-hash';
+import extractTextPlugin from 'extract-text-webpack-plugin';
 
 export default {
   debug: true,
@@ -39,6 +40,9 @@ export default {
     //Hash the file using MD5 so that their names change when the contents change
     new webpackMd5Hash(),
 
+    //Generate an external CSS file with a hash in the filename
+    new extractTextPlugin('[name].[contenthash].css'),
+
     // Use CommonsChunkPlugin to create a separate bundle
     // of vendor libraries so that they're cached separately.
     new webpack.optimize.CommonsChunkPlugin({
@@ -54,7 +58,7 @@ export default {
   module: {
     loaders: [
       {test: /\.js$/, exclude: /node_modules/, loaders: ['babel']},
-      {test: /\.css$/, loaders: ['style','css']}
+      {test: /\.css$/, loader: extractTextPlugin.extract('css?sourceMap')}
     ]
   }
 }
