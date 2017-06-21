@@ -1,19 +1,21 @@
 import path from 'path';
 import webpack from 'webpack';
 import htmlWebpackPlugin from 'html-webpack-plugin';
+import webpackMd5Hash from 'webpack-md5-hash';
 
 export default {
   debug: true,
   devtool: 'source-map',
   noInfo: false,
-  entry: [
-    path.resolve(__dirname, 'src/index')
-  ],
+  entry: {
+    vendor: path.resolve(__dirname, 'src/vendor'),
+    main: path.resolve(__dirname, 'src/index')
+  },
   target: 'web',
   output: {
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/',
-    filename: 'bundle.js'
+    filename: '[name].[chunkhash].js'
   },
   plugins: [
     //Create HTML file that include reference to bundled JS
@@ -32,6 +34,15 @@ export default {
         minifyCSS: true,
         minifyURLs: true
       }
+    }),
+
+    //Hash the file using MD5 so that their names change when the contents change
+    new webpackMd5Hash(),
+
+    // Use CommonsChunkPlugin to create a separate bundle
+    // of vendor libraries so that they're cached separately.
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor'
     }),
 
     //Eliminate duplicated packages when generating bundle
